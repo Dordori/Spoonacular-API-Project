@@ -4,6 +4,7 @@ const center = document.querySelector('#center');
 const left = document.querySelector('#left');
 const searchBar = document.querySelector('.search-bar');
 const searchBarInput = document.querySelector('#search-input');
+const apiKey = ''// your apiKey here
 
 
 document.addEventListener('DOMContentLoaded',() => {
@@ -44,7 +45,7 @@ searchBar.addEventListener('submit', onSearch)
 function onSearch(e){
     e.preventDefault();
     if(searchBarInput.value){
-        const url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey=3fdfd75262a34189a3dfe28ae7b16820&query=';
+        const url = `https://api.spoonacular.com/recipes/complexSearch?${apiKey}&query='`;
         console.log(url)
         const query = searchBarInput.value;
         fetch(url+query)
@@ -98,7 +99,7 @@ function printSearchResult(responseObJ){
 }
 
 // function fetchId(target,id){
-//     let url=`https://api.spoonacular.com/recipes/${id}/information?apiKey=3fdfd75262a34189a3dfe28ae7b16820&includeNutrition=false`;
+//     let url=`https://api.spoonacular.com/recipes/${id}/information?${apiKey}&includeNutrition=false`;
 //     fetch(url)
 //     .then(r => r.json())
 //     .then(r => idFetched(r,target));
@@ -115,7 +116,7 @@ function onRecipeClick1(e){
     // }
     let id = target.dataset.dishId;
     if(id){
-        let url=`https://api.spoonacular.com/recipes/${id}/information?apiKey=3fdfd75262a34189a3dfe28ae7b16820&includeNutrition=false`;
+        let url=`https://api.spoonacular.com/recipes/${id}/information?${apiKey}&includeNutrition=false`;
         fetch(url)
         .then(r => r.json())
         .then(r => onRecipeClick2(r,target));
@@ -458,7 +459,7 @@ function fetchTaste(id){
         addTaste(JSON.parse(taste));
         return;
     }
-    let url = `https://api.spoonacular.com/recipes/${id}/tasteWidget.json?apiKey=3fdfd75262a34189a3dfe28ae7b16820`
+    let url = `https://api.spoonacular.com/recipes/${id}/tasteWidget.json?${apiKey}`
     fetch(url)
     .then(r => json())
     .then(r => saveTaste(r));//לא לשכוח למחוק כל פעם מהמסך האמצעי אחרת אותו טעם של מנה ישנה יופיע בכל המנות
