@@ -1,0 +1,232 @@
+*{
+    margin:0;
+    padding: 0;
+    /* box-sizing: border-box; */
+    /* font-family: 'Poppins', sans-serif; */
+}
+/* div{
+    border: solid 1px;
+    margin: 1px;
+} */
+ .scroll-box {
+            width: 100%;
+            height: 100%;
+            /* overflow: scroll; */
+            /* overflow-y: scroll;
+            overflow-x: hidden; */
+            /* border: 1px solid #ccc; */
+            /* padding: 10px; */
+        }
+#header{
+    background-color: blanchedalmond;
+    align-content: center;
+    display: flex;
+      /* justify-content: center; Centers horizontally */
+      align-items: center; /* Centers vertically */
+      text-align: left;
+      /* height: 100vh; */
+}
+#footer{
+    background-color: darkslateblue;
+
+  min-height: 10vh;
+  
+    width: 100%;
+}
+#container{
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+}
+#right{
+width: 33%;
+min-height: 90vh;
+border: solid 1px;
+
+}
+#center{
+width: 34%;
+border: solid 1px;
+/* overflow:scroll; */
+
+}
+#left{
+width: 33%;
+border: solid 1px;
+background-color: lightskyblue;
+height: 100%;
+  /* overflow: scroll; */
+}
+.result{
+    text-align: center;
+    font-size: 60px;
+    /* overflow: scroll; */
+}
+.search-bar{
+    margin: 3px;
+    margin-left: 35%;
+    border: solid 1px;
+        display: flex;
+      align-items: center;
+      border-radius: 60px;
+      background-color: whitesmoke;
+      padding: 1px 2px;
+}
+.search-bar input{
+    background: transparent;
+    flex:1;
+    border:0;
+    outline: none;
+    padding: 3px 4px;
+    font-size: 24px;
+    color: black;
+}
+.search-bar button{
+    border-radius: 75px;
+    cursor: pointer;
+}
+.recipe-container {
+    background-color: white;
+    border: solid 1px;
+    display: flex;
+    flex-direction: row;
+      align-items: center;
+      border-radius: 45px;
+      cursor: pointer;
+}
+.fav-item{
+    background-color: white;
+    color: rgb(225, 72, 205);
+    border: solid 1px;
+    display: flex;
+    flex-direction: row;
+      align-items: center;
+      border-radius: 30px;
+      cursor: pointer;
+}
+.recipe-container h2{
+    padding:2px;
+    margin: 2px;
+    background-color: orange;
+    border-radius: 15px;
+}
+img+h2{
+    margin-left: 10px;
+}
+.recipe-img{
+    border: solid 1px purple;
+    margin: 1px;
+}
+.fav-item-img{
+    padding: 5px;
+    margin: 5px;
+    border-radius: 45px;
+}
+#heart{
+    margin-left: 5%;
+    color:rgb(226, 43, 116) ;
+    position: relative;
+    font-size: 24px;
+}
+#heart:hover{
+    cursor: pointer;
+}
+.ingridient-list{
+        display: flex;
+    flex-direction: row;
+    
+}
+.name-div, .amount-div, .unit-div{
+    width: 34%;
+    border: solid 1px
+}
+.cart-item-list{
+    
+        display: flex;
+    flex-direction: row;
+}
+.c-name-div, .c-amount-div, .c-unit-div{
+    width: 25%;
+    border: solid 1px
+}
+.desc-container{
+    display:block;
+}
+li{
+    list-style-position: inside;
+}
+/* .desc-container span ol il{
+    margin: 20px;
+    padding: 20px;
+} */
+/* .desc-container li::marker {
+    display: none;
+    } */
+.serving-div{
+    display: flex;
+    flex-direction: row;
+    vertical-align: middle;
+    /* align-items: center;
+    align-content: center;
+    justify-content: center;
+    box-align: center;
+    flex-grow: 1; */
+}
+.serving-div div,p{
+    /* padding: 1px; */
+    margin: 3px;
+
+    /* font-size: 16px; */
+    position: relative;
+}
+.serving-div button{
+    /* padding: 1px; */
+    margin: 3px;
+    height: 20px;
+    width: 20px;
+    /* font-size: 16px; */
+    position: relative;
+}
+.favorite-btn{
+    background-color: rgb(226, 43, 116) ;
+    border-radius: 15px;
+    padding: 3px;
+    margin: 3px;
+    margin-left: 5%;
+}
+.favorite-btn:hover{
+    cursor: pointer;
+    background-color: white;
+}
+.cart-btn{
+    background-color: chartreuse;
+    border-radius: 15px;
+    padding: 3px;
+    margin: 3px;
+    margin-left: 35%;
+}
+.cart-btn:hover{
+    cursor: pointer;
+    background-color: white;
+}
+
+.tooltip-c {
+        position: relative;
+        display: block;
+    }
+
+    .tooltip-m {
+        position: absolute;
+        visibility: hidden;
+        opacity: 0;
+        background-color: rgb(161, 62, 62);
+        color: rgb(181, 173, 173);
+        padding: 10px;
+        border-radius: 5px;
+        z-index: 10; /* Ensure it appears above other content */
+        /* Position the tooltip relative to the container */
+        top: 100%;
+        left: 5%;
+        width: 300px;
+    }
