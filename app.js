@@ -4,7 +4,7 @@ const center = document.querySelector('#center');
 const left = document.querySelector('#left');
 const searchBar = document.querySelector('.search-bar');
 const searchBarInput = document.querySelector('#search-input');
-const apiKey = ''// your apiKey here
+const apiKey = 'apiKey=3fdfd75262a34189a3dfe28ae7b16820';
 
 
 document.addEventListener('DOMContentLoaded',() => {
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded',() => {
   if (dishInfo && dishInfoTarget) {
     const parsedDishInfo = JSON.parse(dishInfo);
     const parsedDishInfoTarget = JSON.parse(dishInfoTarget);
-    onRecipeClick2(parsedDishInfo, parsedDishInfoTarget);
+    onRecipeClick2(null,parsedDishInfo, parsedDishInfoTarget);
     loadFavoritesFromStorage();
   }
 });
@@ -44,8 +44,18 @@ searchBar.addEventListener('submit', onSearch)
 
 function onSearch(e){
     e.preventDefault();
+    //////////// delete previous////////////
+    const previousSearch = left.querySelector('.recipe-container');
+    if (previousSearch) {
+        previousSearch.remove();
+    }
+    const previousSearchDishInfoArr = localStorage.getItem('dishInfoArr');
+    if(previousSearchDishInfoArr){
+        localStorage.removeItem('dishInfoArr');
+    }
+    ////////////search///////////
     if(searchBarInput.value){
-        const url = `https://api.spoonacular.com/recipes/complexSearch?${apiKey}&query='`;
+        const url = `https://api.spoonacular.com/recipes/complexSearch?${apiKey}&query=`;
         console.log(url)
         const query = searchBarInput.value;
         fetch(url+query)
@@ -62,7 +72,7 @@ function printSearchResult(responseObJ){
     saveSearchResult(responseObJ);
     let {results} = responseObJ;
     const div = document.createElement('div');
-    div.className = 'recipe-container-all'
+    div.className = 'recipe-container'
     for (let obj of results) {
         let {id, title, image} = obj;
 
@@ -74,11 +84,13 @@ function printSearchResult(responseObJ){
 
         const div1 = document.createElement('div');
         const img = document.createElement('img');
+        const divInner = document.createElement('div');
         const h2 = document.createElement('h2');
         h2.dataset.dishId = id;
 
-        div1.className = 'recipe-container'
-        img.className = 'recipe-img'
+        div1.className = 'recipe-item';
+        divInner.className = 'recipe-item-inner-div';
+        img.className = 'recipe-img';
 
         div1.dataset.dishId = id;
         img.src = image;
@@ -90,56 +102,93 @@ function printSearchResult(responseObJ){
         img.dataset.dishId = id;
 
         div1.appendChild(img);
-        div1.appendChild(h2);
+        divInner.appendChild(h2);
+        div1.appendChild(divInner);
         div.appendChild(div1);
-        // fetchId(div1,id);
-        div1.addEventListener('click', onRecipeClick1);
+        fetchId(div1,id);
+        div1.addEventListener('click', onRecipeClick2);
     }
     left.appendChild(div);
 }
 
-// function fetchId(target,id){
-//     let url=`https://api.spoonacular.com/recipes/${id}/information?${apiKey}&includeNutrition=false`;
-//     fetch(url)
-//     .then(r => r.json())
-//     .then(r => idFetched(r,target));
-// }
-// function idFetched(r,t){
-//     t.dataset.recipeInfo = r;
-    
-// }
-function onRecipeClick1(e){
-    let target = e.target;
-
-    // if(!target.hasChildNodes() || target.tagName == 'A'){
-    //     target = target.parentElement;
-    // }
-    let id = target.dataset.dishId;
-    if(id){
-        let url=`https://api.spoonacular.com/recipes/${id}/information?${apiKey}&includeNutrition=false`;
-        fetch(url)
-        .then(r => r.json())
-        .then(r => onRecipeClick2(r,target));
-    } else {
-        console.log('error 1220')
-        return;
-    }
+function fetchId(target,id){
+    let url=`https://api.spoonacular.com/recipes/${id}/information?${apiKey}&includeNutrition=false`;
+    fetch(url)
+    .then(r => r.json())
+    .then(r => idFetched(r,target));
 }
+function idFetched(r,target){
+    target.dataset.recipeInfo = JSON.stringify(r);
+    const innerDiv = target.querySelector('.recipe-item-inner-div');
+    let {id, sourceName} = r;
+    const p = document.createElement('p');
+    p.dataset.dishId = id;
+    p.innerText = sourceName;
+    innerDiv.appendChild(p);
+    /////////// save //////////
+    const dishInfoArr = localStorage.getItem('dishInfoArr');
+    if(dishInfoArr){
+        let parsedDIA = JSON.parse(dishInfoArr);
+        parsedDIA.push(JSON.stringify(r));
+        localStorage.setItem('dishInfoArr',JSON.stringify(parsedDIA));
+    } else {
+        let DIA = [];
+        DIA.push(JSON.stringify(r));
+        localStorage.setItem('dishInfoArr',JSON.stringify(DIA));
+    }
+
+}
+// function onRecipeClick1(e){
+//     let target = e.target;
+
+//     // if(!target.hasChildNodes() || target.tagName == 'A'){
+//     //     target = target.parentElement;
+//     // }
+//     let id = target.dataset.dishId;
+//     if(id){
+//         let url=`https://api.spoonacular.com/recipes/${id}/information?${apiKey}&includeNutrition=false`;
+//         fetch(url)
+//         .then(r => r.json())
+//         .then(r => onRecipeClick2(r,target));
+//     } else {
+//         console.log('error 1220')
+//         return;
+//     }
+// }
 function onRecipeClickSave(r,t){
     localStorage.setItem('dishInfo', JSON.stringify(r));
     localStorage.setItem('dishInfoTarget', JSON.stringify(t));
 }
 
-function onRecipeClick2(r,target){
+function onRecipeClick2(event,r,target){  //old - (r,target)
+    if(event){
+        target = event.target;
+        let dishId = target.dataset.dishId;
+        const dishInfoArr = localStorage.getItem('dishInfoArr');
+        if (dishInfoArr) {
+            let parsedDishInfoArr = JSON.parse(dishInfoArr);
+            for (const element of parsedDishInfoArr) {
+                const parsedElement = JSON.parse(element);
+                let {id} = parsedElement;
+                if (id == dishId) {
+                    r = parsedElement; break;
+                }
+            }
+        }
+
+    }
     onRecipeClickSave(r,target);
-    const previous = document.querySelector('.desc-container');
+
+    ///////// delete /////////
+    const previous = center.querySelector('.desc-container');
     if (previous) {
         previous.remove();
     }
-    const lsTaste = localStorage.getItem('taste');
-    if (lsTaste) {
-        localStorage.removeItem('taste');
-    }
+    // const LSTaste = localStorage.getItem('taste');
+    // if (LSTaste) {
+    //     localStorage.removeItem('taste');
+    // }
+    //////////////////////////
         // console.log(target.tagName);
     // dishTypes = arr
     // summary = string
@@ -215,6 +264,10 @@ function onRecipeClick2(r,target){
         servings.innerHTML = parseFloat(servings.innerHTML)+1;
         for (let i of ingridientsAmounts) {
             i.innerText = parseFloat(i.innerText)+parseFloat(i.parentElement.dataset.ratio);
+            // i.innerText = parseFloat(i.innerText).toFixed(2);
+            // if (parseFloat(i.innerText)%1 >= 0.96){
+            //     i.innerText = Math.ceil(i.innerText);
+            // }
         }}
     )
     const servingsMinus = document.createElement('button');
@@ -228,6 +281,10 @@ function onRecipeClick2(r,target){
         servings.innerHTML = parseFloat(servings.innerHTML)-1;
         for (let i of ingridientsAmounts) {
             i.innerText = parseFloat(i.innerText)-parseFloat(i.parentElement.dataset.ratio);
+            // i.innerText = parseFloat(i.innerText).toFixed(2);
+            // if (parseFloat(i.innerText)%1 <= 0.04){
+            //     i.innerText = Math.floor(i.innerText);
+            // }
         }}
     )
 
@@ -281,6 +338,7 @@ function onRecipeClick2(r,target){
 
     const taste = document.createElement('div');
     taste.classList.add('taste-div');
+    div.appendChild(taste);
 
     if(instructions){
     const instructionsSpan = document.createElement('span');
@@ -363,7 +421,7 @@ function loadFavoritesFromStorage(){
         let a = [img,p,deleteBtn];
         a.forEach((i)=>{div2.appendChild(i)});
 
-        div1.addEventListener('click',onRecipeClick1)
+        div1.addEventListener('click',onRecipeClick2)
 
         div1.appendChild(div2);
     }
@@ -461,8 +519,8 @@ function fetchTaste(id){
     }
     let url = `https://api.spoonacular.com/recipes/${id}/tasteWidget.json?${apiKey}`
     fetch(url)
-    .then(r => json())
-    .then(r => saveTaste(r));//לא לשכוח למחוק כל פעם מהמסך האמצעי אחרת אותו טעם של מנה ישנה יופיע בכל המנות
+    .then(r => r.json())
+    .then(r => saveTaste(r));// לא לשכוח למחוק כל פעם מהמסך האמצעי אחרת אותו טעם של מנה ישנה יופיע מחדש
 }
 
 function saveTaste(r){
@@ -471,7 +529,7 @@ function saveTaste(r){
 }
 
 function addTaste(r){
-    const tasteDiv = document.querySelector('.taste-div');
+    const tasteDiv = center.querySelector('.taste-div');
     const tasteContainer = document.createElement('div');
     tasteContainer.classList.add('.taste-c');
     
