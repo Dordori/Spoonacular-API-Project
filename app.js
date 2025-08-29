@@ -4,7 +4,7 @@ const center = document.querySelector('#center');
 const left = document.querySelector('#left');
 const searchBar = document.querySelector('.search-bar');
 const searchBarInput = document.querySelector('#search-input');
-const apiKey = 'apiKey=3fdfd75262a34189a3dfe28ae7b16820';
+const apiKey = '';
 
 
 document.addEventListener('DOMContentLoaded',() => {
@@ -336,9 +336,9 @@ function onRecipeClick2(event,r,target){  //old - (r,target)
     div.appendChild(cartBtn);
     cartBtn.addEventListener('click', addToCart);
 
-    const taste = document.createElement('div');
-    taste.classList.add('taste-div');
-    div.appendChild(taste);
+    const tasteDiv = document.createElement('div');
+    tasteDiv.classList.add('taste-div');
+    div.appendChild(tasteDiv);
 
     if(instructions){
     const instructionsSpan = document.createElement('span');

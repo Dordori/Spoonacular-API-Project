@@ -28,7 +28,8 @@
 }
 #footer{
     background-color: darkslateblue;
-
+    display: grid;
+  grid-template-rows: 1fr auto; /* 1fr for content, auto for footer height */
   min-height: 10vh;
   
     width: 100%;
@@ -86,7 +87,7 @@ height: 100%;
     border-radius: 75px;
     cursor: pointer;
 }
-.recipe-container {
+.recipe-item {
     background-color: white;
     border: solid 1px;
     display: flex;
@@ -105,7 +106,7 @@ height: 100%;
       border-radius: 30px;
       cursor: pointer;
 }
-.recipe-container h2{
+.recipe-item h2{
     padding:2px;
     margin: 2px;
     background-color: orange;
@@ -117,6 +118,9 @@ img+h2{
 .recipe-img{
     border: solid 1px purple;
     margin: 1px;
+}
+.recipe-item-inner-div{
+    display: block;
 }
 .fav-item-img{
     padding: 5px;
@@ -143,7 +147,7 @@ img+h2{
 }
 .cart-item-list{
     
-        display: flex;
+    display: flex;
     flex-direction: row;
 }
 .c-name-div, .c-amount-div, .c-unit-div{
