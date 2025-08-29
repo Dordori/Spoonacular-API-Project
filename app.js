@@ -105,19 +105,31 @@ function printSearchResult(responseObJ){
         divInner.appendChild(h2);
         div1.appendChild(divInner);
         div.appendChild(div1);
-        fetchId(div1,id);
+        fetchById(div1,id);
         div1.addEventListener('click', onRecipeClick2);
     }
     left.appendChild(div);
 }
 
-function fetchId(target,id){
+function fetchById(target,id){
+    const dishInfoArr = localStorage.getItem('dishInfoArr');
+    
+    if(dishInfoArr){
+        let parsedDishInfoArr = JSON.parse(dishInfoArr);
+        let parsedDishInfoArrLength = parsedDishInfoArr.length
+        console.log(parsedDishInfoArrLength, '1870');
+        if(parsedDishInfoArrLength >= 10){
+        let r = returnDishFromDishInfoArr(id);
+        fetchById2(r,target,false);
+        return;
+        }
+    }
     let url=`https://api.spoonacular.com/recipes/${id}/information?${apiKey}&includeNutrition=false`;
     fetch(url)
     .then(r => r.json())
-    .then(r => idFetched(r,target));
+    .then(r => fetchById2(r,target,true));
 }
-function idFetched(r,target){
+function fetchById2(r,target,isNeededToSaveToStorage){
     target.dataset.recipeInfo = JSON.stringify(r);
     const innerDiv = target.querySelector('.recipe-item-inner-div');
     let {id, sourceName} = r;
@@ -126,6 +138,7 @@ function idFetched(r,target){
     p.innerText = sourceName;
     innerDiv.appendChild(p);
     /////////// save //////////
+    if(isNeededToSaveToStorage){
     const dishInfoArr = localStorage.getItem('dishInfoArr');
     if(dishInfoArr){
         let parsedDIA = JSON.parse(dishInfoArr);
@@ -136,7 +149,7 @@ function idFetched(r,target){
         DIA.push(JSON.stringify(r));
         localStorage.setItem('dishInfoArr',JSON.stringify(DIA));
     }
-
+}
 }
 // function onRecipeClick1(e){
 //     let target = e.target;
@@ -160,20 +173,25 @@ function onRecipeClickSave(r,t){
     localStorage.setItem('dishInfoTarget', JSON.stringify(t));
 }
 
-function onRecipeClick2(event,r,target){  //old - (r,target)
+function returnDishFromDishInfoArr(dishId){
+    const dishInfoArr = localStorage.getItem('dishInfoArr');
+    let parsedDishInfoArr = JSON.parse(dishInfoArr);
+            for (const element of parsedDishInfoArr) {
+                const parsedElement = JSON.parse(element);
+                let {id} = parsedElement;
+                if (id == dishId) {
+                    return parsedElement;
+                }
+            }
+}
+
+function onRecipeClick2(event,r,target){
     if(event){
         target = event.target;
         let dishId = target.dataset.dishId;
         const dishInfoArr = localStorage.getItem('dishInfoArr');
         if (dishInfoArr) {
-            let parsedDishInfoArr = JSON.parse(dishInfoArr);
-            for (const element of parsedDishInfoArr) {
-                const parsedElement = JSON.parse(element);
-                let {id} = parsedElement;
-                if (id == dishId) {
-                    r = parsedElement; break;
-                }
-            }
+            r = returnDishFromDishInfoArr(dishId);
         }
 
     }
