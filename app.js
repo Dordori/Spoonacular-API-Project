@@ -4,7 +4,7 @@ const center = document.querySelector('#center');
 const left = document.querySelector('#left');
 const searchBar = document.querySelector('.search-bar');
 const searchBarInput = document.querySelector('#search-input');
-const apiKey = '';
+const apiKey = 'apiKey=3fdfd75262a34189a3dfe28ae7b16820';
 
 
 document.addEventListener('DOMContentLoaded',() => {
@@ -56,7 +56,6 @@ function onSearch(e){
     ////////////search///////////
     if(searchBarInput.value){
         const url = `https://api.spoonacular.com/recipes/complexSearch?${apiKey}&query=`;
-        console.log(url)
         const query = searchBarInput.value;
         fetch(url+query)
         .then(r => r.json())
@@ -117,7 +116,6 @@ function fetchById(target,id){
     if(dishInfoArr){
         let parsedDishInfoArr = JSON.parse(dishInfoArr);
         let parsedDishInfoArrLength = parsedDishInfoArr.length
-        console.log(parsedDishInfoArrLength, '1870');
         if(parsedDishInfoArrLength >= 10){
         let r = returnDishFromDishInfoArr(id);
         fetchById2(r,target,false);
@@ -151,23 +149,7 @@ function fetchById2(r,target,isNeededToSaveToStorage){
     }
 }
 }
-// function onRecipeClick1(e){
-//     let target = e.target;
 
-//     // if(!target.hasChildNodes() || target.tagName == 'A'){
-//     //     target = target.parentElement;
-//     // }
-//     let id = target.dataset.dishId;
-//     if(id){
-//         let url=`https://api.spoonacular.com/recipes/${id}/information?${apiKey}&includeNutrition=false`;
-//         fetch(url)
-//         .then(r => r.json())
-//         .then(r => onRecipeClick2(r,target));
-//     } else {
-//         console.log('error 1220')
-//         return;
-//     }
-// }
 function onRecipeClickSave(r,t){
     localStorage.setItem('dishInfo', JSON.stringify(r));
     localStorage.setItem('dishInfoTarget', JSON.stringify(t));
@@ -202,21 +184,11 @@ function onRecipeClick2(event,r,target){
     if (previous) {
         previous.remove();
     }
-    // const LSTaste = localStorage.getItem('taste');
-    // if (LSTaste) {
-    //     localStorage.removeItem('taste');
-    // }
+    const LSTaste = localStorage.getItem('taste');
+    if (LSTaste) {
+        localStorage.removeItem('taste');
+    }
     //////////////////////////
-        // console.log(target.tagName);
-    // dishTypes = arr
-    // summary = string
-    // extendedIngredients = arr of obj
-    
-        // let r = target.dataset.recipeInfo;
-        console.log(r,'1330');
-        for (const key of Object.keys(r)) {
-        console.log('response obj: ',`Key: ${key}, Value: ${r[key]}`);
-        }
         let {id,title,image,servings,readyInMinutes,cookingMinutes,preparationMinutes,sourceName,sourceUrl,
         spoonacularSourceUrl,dishTypes,extendedIngredients,summary,creditsText,instructions} = r;
 
@@ -224,8 +196,6 @@ function onRecipeClick2(event,r,target){
     div.classList.add('desc-container');
     div.dataset.r = JSON.stringify(r,['id','title','image']);
     
-
-            console.log(div.dataset.r,'2550')
     const img = document.createElement('img');
     img.src = image;
     img.style.height = '30%';
@@ -320,7 +290,7 @@ function onRecipeClick2(event,r,target){
     const ingridientsListTitle = document.createElement('h3');
     ingridientsListTitle.innerHTML = '<br><b>INGRIDIENTS:</b> <br>';
     ingridientsList.appendChild(ingridientsListTitle);
-    // console.log(extendedIngredients)
+
     let ingridientsArrForCart = [];
     for(let obj of extendedIngredients){
         ingridientsArrForCart.push(JSON.stringify(obj,['name', 'amount', 'unit']))
@@ -372,10 +342,13 @@ function onRecipeClick2(event,r,target){
     sourceNameSpan.innerHTML = '<br><b>source:</b> ' + sourceName + ''+ '<br><br>' ;
     div.appendChild(sourceNameSpan);
 
-        const spoonacularSourceUrlA = document.createElement('a');
-    spoonacularSourceUrlA.href = spoonacularSourceUrl;
-    spoonacularSourceUrlA.innerHTML = 'FOR MORE INFO CLICK HERE<br><br><br><br>';
-    div.appendChild(spoonacularSourceUrlA);
+    const SourceUrlButton = document.createElement('button');
+    SourceUrlButton.classList.add('directions-btn');
+    SourceUrlButton.textContent = "Directions";
+    SourceUrlButton.addEventListener('click', function() {
+            window.open(spoonacularSourceUrl, '_blank');
+        });
+    div.appendChild(SourceUrlButton);
         
 
     center.appendChild(div);
@@ -450,7 +423,6 @@ function loadFavoritesFromStorage(){
 function deleteFromFavorites(e){
     let t = e.target.parentElement;
     let id = t.dataset.id;
-    console.log(t.tagName,id);
     const favorites = localStorage.getItem('favorites');
     let parsedFavorites = JSON.parse(favorites);
     parsedFavorites.splice(id,1);
@@ -462,12 +434,7 @@ function deleteFromFavorites(e){
 function addToCart(){
     const dataContainer = document.querySelector('.desc-container');
     const ingridients = dataContainer.dataset.ingridients; 
-    console.log(ingridients.length)
     let pi = JSON.parse(ingridients);
-    console.log(pi.length)
-    for (const e of pi) {
-        console.log(e)
-    }
     const exist = document.querySelector('.cart');
     if(!exist){
         const cart = document.createElement('div');
@@ -482,14 +449,26 @@ function addToCart(){
         nameDiv.innerText = name;
         const amountDiv = document.createElement('div');
         amountDiv.classList.add('c-amount-div');
-        amountDiv.innerText = amount;
+        const amountInput = document.createElement('input');
+        amountInput.type = 'number';
+        amountInput.min = '0';
+        amountInput.value = amount;
+        if( unit == 'cup' || unit == 'cups' || unit == 'tablespoon' || unit == 'teaspoon' || unit == 'tbsp' || unit == 'tsp'){
+            amountInput.step = '0.25';
+        }
+        amountInput.classList.add('cart-amount-input');
+        amountDiv.appendChild(amountInput);
         const unitDiv = document.createElement('div');
         unitDiv.classList.add('c-unit-div');
         unitDiv.innerText = unit;
+        const delBtn = document.createElement('button');
+        delBtn.innerText = 'Delete';
+        delBtn.addEventListener('click', deleteParent);
+
         ingridientList.appendChild(unitDiv);
-        
         ingridientList.appendChild(amountDiv);
         ingridientList.appendChild(nameDiv);
+        ingridientList.appendChild(delBtn);
         cart.appendChild(ingridientList);
 
          }
@@ -503,7 +482,7 @@ function addToCart(){
             let {name, amount, unit} = p;
             for (const e of existingItems) {
                 if(name == e.children[2].innerText && unit == e.children[0].innerText){
-                    e.children[1].innerText = parseFloat(e.children[1].innerText)+parseFloat(amount);
+                    e.children[1].children[0].value = parseFloat(e.children[1].children[0].value)+parseFloat(amount);
                     foundExisiting =true;
                     break;
                 }
@@ -516,17 +495,31 @@ function addToCart(){
             nameDiv.innerText = name;
             const amountDiv = document.createElement('div');
             amountDiv.classList.add('c-amount-div');
-            amountDiv.innerText = amount;
+            const amountInput = document.createElement('input');
+            amountInput.type = 'number';
+            amountInput.min = '0';
+            amountInput.value = amount;
+            if( unit == 'cup' || unit == 'cups' || unit == 'tablespoon' || unit == 'teaspoon' || unit == 'tbsp' || unit == 'tsp'){
+            amountInput.step = '0.25';}
+            amountInput.classList.add('cart-amount-input');
+            amountDiv.appendChild(amountInput);
             const unitDiv = document.createElement('div');
             unitDiv.classList.add('c-unit-div');
             unitDiv.innerText = unit;
-            ingridientList.appendChild(unitDiv);
-            
-            ingridientList.appendChild(amountDiv);
-            ingridientList.appendChild(nameDiv);
+        const delBtn = document.createElement('button');
+        delBtn.innerText = 'Delete';
+        delBtn.addEventListener('click', deleteParent);
+
+        ingridientList.appendChild(unitDiv);
+        ingridientList.appendChild(amountDiv);
+        ingridientList.appendChild(nameDiv);
+        ingridientList.appendChild(delBtn);
             cart.appendChild(ingridientList);
             }
         }}
+}
+function deleteParent(e){
+    e.target.parentElement.remove();
 }
 
 function fetchTaste(id){
@@ -550,45 +543,42 @@ function addTaste(r){
     const tasteDiv = center.querySelector('.taste-div');
     const tasteContainer = document.createElement('div');
     tasteContainer.classList.add('.taste-c');
+    tasteContainer.style.border = '1px solid';
+    tasteContainer.style.margin = '2px';
+    tasteContainer.style.marginTop = '3em';
+
+    const h3 = document.createElement('h3');
+    h3.innerHTML = '<b>Taste</b>';
+    tasteContainer.appendChild(h3);
+    h3.style.textAlign = 'center';
     
     for (const key of Object.keys(r)) {
-    console.log('response obj: ',`Key: ${key}, Value: ${r[key]}`);
     const p = document.createElement('p');
-    p.innerHTML = `<b>${key}:</b> ${r[key]}`;
+    p.innerHTML = `<b>${key}:</b> ${r[key]} =`;
     let val = Math.floor(parseFloat(r[key]));
-    if (val>=100) {
-        p.innerHTML += ' &#128128;'
+    let icon;
+    if(key=='sweetness'){
+    icon = '🍬';}
+    if(key=='saltiness'){
+    icon = '🧂';}
+    if(key=='sourness'){
+    icon = '🍋';}
+    if(key=='bitterness'){
+    icon = '☕';}
+    if(key=='savoriness'){
+    icon = '😋';}
+    if(key=='fattiness'){
+    icon = '🧈';}
+    if(key=='spiciness'){
+    icon = '🌶️';}
+    let numToAdd = Math.round(val/10);
+    for (let i = 0; i < numToAdd; i++) {
+        p.innerHTML += icon;
     }
-    if (val>90 && val<100) {
-        p.innerHTML += ' &#128128;'
+    if(numToAdd == 0){
+        p.innerHTML += ' 0';
     }
-    if (val>80 && val<90) {
-        p.innerHTML += ' &#128128;'
-    }
-    if (val>70 && val<80) {
-        p.innerHTML += ' &#128128;'
-    }
-    if (val>60 && val<70) {
-        p.innerHTML += ' &#128128;'
-    }
-    if (val>50 && val<60) {
-        p.innerHTML += ' &#128128;'
-    }
-    if (val>40 && val<50) {
-        p.innerHTML += ' &#128128;'
-    }
-    if (val>30 && val<40) {
-        p.innerHTML += ' &#128128;'
-    }
-    if (val>20 && val<30) {
-        p.innerHTML += ' &#128128;'
-    }
-    if (val>10 && val<20) {
-        p.innerHTML += ' &#128128;'
-    }
-    if (val>0 && val<10) {
-        p.innerHTML += ' &#128128;'
-    }
+
     tasteContainer.appendChild(p);
     }
     tasteDiv.appendChild(tasteContainer);

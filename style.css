@@ -28,8 +28,6 @@
 }
 #footer{
     background-color: darkslateblue;
-    display: grid;
-  grid-template-rows: 1fr auto; /* 1fr for content, auto for footer height */
   min-height: 10vh;
   
     width: 100%;
@@ -145,6 +143,10 @@ img+h2{
     width: 34%;
     border: solid 1px
 }
+.cart{
+    margin: 15px;
+    padding: 15px;
+}
 .cart-item-list{
     
     display: flex;
@@ -220,17 +222,44 @@ li{
         display: block;
     }
 
-    .tooltip-m {
-        position: absolute;
-        visibility: hidden;
-        opacity: 0;
-        background-color: rgb(161, 62, 62);
-        color: rgb(181, 173, 173);
-        padding: 10px;
-        border-radius: 5px;
-        z-index: 10; /* Ensure it appears above other content */
-        /* Position the tooltip relative to the container */
-        top: 100%;
-        left: 5%;
-        width: 300px;
-    }
+.tooltip-m {
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    background-color: rgb(161, 62, 62);
+    color: rgb(181, 173, 173);
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 10; /* Ensure it appears above other content */
+    /* Position the tooltip relative to the container */
+    top: 100%;
+    left: 5%;
+    width: 300px;
+}
+.taste-c{
+    text-align: center;
+    border: 1px solid;
+}
+.cart-title{
+    text-align: center;
+    margin: 1em;
+    padding: 1em;
+    text-decoration: underline;
+    border: 1px solid;
+    border-radius: 15px;
+}
+.directions-btn{
+    border-radius: 15px;
+    padding: 13px;
+    margin: 13px;
+    margin-left: 45%;
+    margin-bottom: 5%;
+    background-color:cornflowerblue;
+}
+.directions-btn:hover{
+    cursor: pointer;
+    background-color: white;
+}
+.cart-amount-input{
+    width: 100%;
+}
